@@ -1,22 +1,28 @@
 import { useRef } from 'react';
 import MonacoEditor from '@monaco-editor/react';
 import { MonacoBinding } from 'y-monaco';
+import * as Y from 'yjs';
 
 // Collaborative Monaco editor bound to the room's shared Yjs text.
-export default function Editor({ connection, language }) {
+export default function Editor({ connection, language, onReady }) {
   const bindingRef = useRef(null);
 
-  // Bind the Monaco model to the Yjs text once the editor is mounted.
+  // Bind the Monaco model to the Yjs text and expose an undo manager.
   function handleMount(editor) {
     if (!connection) {
       return;
     }
-    bindingRef.current = new MonacoBinding(
+    const binding = new MonacoBinding(
       connection.text,
       editor.getModel(),
       new Set([editor]),
       connection.awareness ?? null
     );
+    bindingRef.current = binding;
+    const undoManager = new Y.UndoManager(connection.text, {
+      trackedOrigins: new Set([binding]),
+    });
+    onReady?.(undoManager);
   }
 
   return (

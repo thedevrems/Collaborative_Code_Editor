@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Toolbar from './Toolbar.jsx';
 import Editor from './Editor.jsx';
@@ -8,6 +9,7 @@ import { useRoomConnection } from '../hooks/useRoomConnection.js';
 import { useSharedLanguage } from '../hooks/useSharedLanguage.js';
 import { usePresence } from '../hooks/usePresence.js';
 import { useExecution } from '../hooks/useExecution.js';
+import { useUndo } from '../hooks/useUndo.js';
 
 // Full room screen wiring editor, presence, cursors and code execution.
 export default function RoomView() {
@@ -16,6 +18,8 @@ export default function RoomView() {
   const { language, changeLanguage } = useSharedLanguage(connection);
   const users = usePresence(connection);
   const { running, result, run } = useExecution(connection, language);
+  const [undoManager, setUndoManager] = useState(null);
+  const undo = useUndo(undoManager);
 
   return (
     <div className="room">
@@ -26,10 +30,15 @@ export default function RoomView() {
         connected={connected}
         onRun={run}
         running={running}
+        undo={undo}
       />
       <main className="room-body">
         <div className="editor-column">
-          <Editor connection={connection} language={language} />
+          <Editor
+            connection={connection}
+            language={language}
+            onReady={setUndoManager}
+          />
           <OutputPanel running={running} result={result} />
         </div>
         <aside className="sidebar">
