@@ -13,7 +13,7 @@ import { logger } from '../utils/logger.js';
 // Add a socket to a room and broadcast the updated presence.
 async function handleJoin(io, socket, payload = {}) {
   const roomId = payload.roomId;
-  if (!roomId || !getRoom(roomId)) {
+  if (!roomId || !(await getRoom(roomId))) {
     socket.emit(EVENTS.ERROR, { error: 'room_not_found' });
     return;
   }
