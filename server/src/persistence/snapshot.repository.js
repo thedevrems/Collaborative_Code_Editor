@@ -16,3 +16,13 @@ export async function latestSnapshot(roomId) {
   );
   return rows[0]?.data ?? null;
 }
+
+// List every snapshot of a room in chronological order.
+export async function listSnapshots(roomId) {
+  const { rows } = await query(
+    `SELECT data, created_at AS "createdAt"
+     FROM snapshots WHERE room_id = $1 ORDER BY created_at ASC`,
+    [roomId]
+  );
+  return rows;
+}

@@ -24,3 +24,9 @@ export async function fetchRoom(id) {
   const response = await fetch(`${SERVER_URL}/api/rooms/${id}`);
   return parse(response);
 }
+
+// Fetch the ordered playback frames of a room's edit history.
+export async function fetchPlayback(id) {
+  const response = await fetch(`${SERVER_URL}/api/rooms/${id}/playback`);
+  return parse(response);
+}

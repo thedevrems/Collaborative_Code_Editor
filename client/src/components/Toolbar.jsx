@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import LanguageSelector from './LanguageSelector.jsx';
 
 // Top bar showing the room, language selector, run action and status.
@@ -36,6 +37,9 @@ export default function Toolbar(props) {
       <button className="toolbar-button" type="button" onClick={copyLink}>
         Copy link
       </button>
+      <Link className="toolbar-button" to={`/room/${roomId}/playback`}>
+        Playback
+      </Link>
       <span className={connected ? 'status status-online' : 'status status-offline'}>
         {connected ? 'connected' : 'offline'}
       </span>
