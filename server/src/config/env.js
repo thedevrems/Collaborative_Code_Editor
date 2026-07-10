@@ -23,4 +23,8 @@ export const config = {
     'DATABASE_URL',
     'postgres://editor:editor@localhost:5432/editor'
   ),
+  execCpus: readString('EXEC_CPUS', '0.5'),
+  execMemory: readString('EXEC_MEMORY', '128m'),
+  execPids: readInt('EXEC_PIDS', 64),
+  execTimeoutMs: readInt('EXEC_TIMEOUT_MS', 5000),
 };

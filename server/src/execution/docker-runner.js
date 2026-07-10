@@ -3,15 +3,19 @@ import { mkdtemp, writeFile, rm } from 'fs/promises';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { nanoid } from 'nanoid';
+import { getQuotas } from './quotas.js';
 
 const MAX_OUTPUT = 100000;
 
-// Build the docker run arguments that enforce isolation for one execution.
+// Build the docker run arguments that enforce isolation and quotas.
 function buildArgs(name, dir, langConfig) {
+  const quotas = getQuotas();
   return [
     'run', '--rm', '--name', name,
     '--network', 'none',
-    '--pids-limit', '64',
+    '--cpus', String(quotas.cpus),
+    '--memory', String(quotas.memory),
+    '--pids-limit', String(quotas.pids),
     '--cap-drop', 'ALL',
     '--security-opt', 'no-new-privileges',
     '-v', `${dir}:/sandbox:ro`, '-w', '/sandbox',
