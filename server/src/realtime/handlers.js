@@ -18,6 +18,7 @@ async function handleJoin(io, socket, payload = {}) {
     return;
   }
   const user = buildUser(payload.user);
+  socket.data.user = user;
   socket.join(roomId);
   await addPresence(roomId, socket.id, user);
   const members = await listPresence(roomId);
