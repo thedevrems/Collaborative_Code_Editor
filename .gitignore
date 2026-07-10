@@ -35,7 +35,6 @@ coverage/
 .idea/
 .vscode/*
 !.vscode/extensions.json
-.claude/
 *.swp
 Thumbs.db
 
