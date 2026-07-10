@@ -7,11 +7,11 @@ import {
   listPresence,
   roomsForSocket,
   forgetSocket,
-} from './presence.js';
+} from '../state/room-state.js';
 import { logger } from '../utils/logger.js';
 
 // Add a socket to a room and broadcast the updated presence.
-function handleJoin(io, socket, payload = {}) {
+async function handleJoin(io, socket, payload = {}) {
   const roomId = payload.roomId;
   if (!roomId || !getRoom(roomId)) {
     socket.emit(EVENTS.ERROR, { error: 'room_not_found' });
@@ -19,15 +19,16 @@ function handleJoin(io, socket, payload = {}) {
   }
   const user = buildUser(payload.user);
   socket.join(roomId);
-  addPresence(roomId, socket.id, user);
-  socket.emit(EVENTS.ROOM_JOINED, { roomId, user, members: listPresence(roomId) });
+  await addPresence(roomId, socket.id, user);
+  const members = await listPresence(roomId);
+  socket.emit(EVENTS.ROOM_JOINED, { roomId, user, members });
   socket.to(roomId).emit(EVENTS.PRESENCE_JOINED, { roomId, user });
-  socket.emit(EVENTS.PRESENCE_LIST, { roomId, members: listPresence(roomId) });
+  socket.emit(EVENTS.PRESENCE_LIST, { roomId, members });
 }
 
 // Remove a socket from a single room and notify remaining members.
-function leaveRoom(io, socket, roomId) {
-  const user = removePresence(roomId, socket.id);
+async function leaveRoom(io, socket, roomId) {
+  const user = await removePresence(roomId, socket.id);
   socket.leave(roomId);
   if (user) {
     socket.to(roomId).emit(EVENTS.PRESENCE_LEFT, { roomId, user });
@@ -35,18 +36,18 @@ function leaveRoom(io, socket, roomId) {
 }
 
 // Handle an explicit leave request from a client.
-function handleLeave(io, socket, payload = {}) {
+async function handleLeave(io, socket, payload = {}) {
   if (payload.roomId) {
-    leaveRoom(io, socket, payload.roomId);
+    await leaveRoom(io, socket, payload.roomId);
   }
 }
 
 // Clean up every room a socket belonged to when it disconnects.
-function handleDisconnect(io, socket) {
-  for (const roomId of roomsForSocket(socket.id)) {
-    leaveRoom(io, socket, roomId);
+async function handleDisconnect(io, socket) {
+  for (const roomId of await roomsForSocket(socket.id)) {
+    await leaveRoom(io, socket, roomId);
   }
-  forgetSocket(socket.id);
+  await forgetSocket(socket.id);
   logger.info(`socket disconnected: ${socket.id}`);
 }
 
