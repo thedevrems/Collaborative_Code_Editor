@@ -9,5 +9,8 @@ export const EVENTS = {
   CRDT_SYNC_STEP2: 'crdt:sync-step2',
   CRDT_UPDATE: 'crdt:update',
   CRDT_AWARENESS: 'crdt:awareness',
+  EXECUTION_RUN: 'execution:run',
+  EXECUTION_STARTED: 'execution:started',
+  EXECUTION_RESULT: 'execution:result',
   ERROR: 'error',
 };
