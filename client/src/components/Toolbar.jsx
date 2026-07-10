@@ -2,7 +2,8 @@ import LanguageSelector from './LanguageSelector.jsx';
 
 // Top bar showing the room, language selector, run action and status.
 export default function Toolbar(props) {
-  const { roomId, language, onLanguageChange, connected, onRun, running } = props;
+  const { roomId, language, onLanguageChange, connected, onRun, running, undo } =
+    props;
 
   // Copy the current room URL to the clipboard.
   function copyLink() {
@@ -13,6 +14,22 @@ export default function Toolbar(props) {
     <header className="toolbar">
       <span className="toolbar-title">Room {roomId}</span>
       <LanguageSelector value={language} onChange={onLanguageChange} />
+      <button
+        className="toolbar-button"
+        type="button"
+        onClick={undo?.undo}
+        disabled={!undo?.canUndo}
+      >
+        Undo
+      </button>
+      <button
+        className="toolbar-button"
+        type="button"
+        onClick={undo?.redo}
+        disabled={!undo?.canRedo}
+      >
+        Redo
+      </button>
       <button className="toolbar-button" type="button" onClick={onRun} disabled={running}>
         {running ? 'Running…' : 'Run'}
       </button>
