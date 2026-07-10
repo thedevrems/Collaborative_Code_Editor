@@ -1,0 +1,23 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: editor-redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - ./data/redis:/data
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: editor-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: editor
+      POSTGRES_PASSWORD: editor
+      POSTGRES_DB: editor
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    restart: unless-stopped
