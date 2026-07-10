@@ -16,6 +16,11 @@ export function removeDoc(roomId) {
   docs.delete(roomId);
 }
 
+// Iterate over all active room documents as [roomId, doc] entries.
+export function allDocs() {
+  return docs.entries();
+}
+
 // Encode the document state as an update diff relative to a state vector.
 export function encodeDocState(doc, stateVector) {
   return Y.encodeStateAsUpdate(doc, stateVector);

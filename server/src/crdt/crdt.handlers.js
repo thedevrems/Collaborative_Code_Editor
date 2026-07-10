@@ -5,6 +5,7 @@ import {
   encodeDocStateVector,
   applyDocUpdate,
 } from './doc-manager.js';
+import { ensureRoomLoaded } from '../persistence/snapshot.service.js';
 
 // Coerce socket.io binary payloads into a Uint8Array.
 function toBytes(payload) {
@@ -12,11 +13,12 @@ function toBytes(payload) {
 }
 
 // Answer a client sync step 1 with a diff and our own state vector.
-function handleSyncStep1(socket, payload) {
+async function handleSyncStep1(socket, payload) {
   const { roomId, stateVector } = payload ?? {};
   if (!roomId) {
     return;
   }
+  await ensureRoomLoaded(roomId);
   const doc = getDoc(roomId);
   const update = encodeDocState(doc, toBytes(stateVector));
   socket.emit(EVENTS.CRDT_SYNC_STEP2, { roomId, update });
