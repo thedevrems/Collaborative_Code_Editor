@@ -2,6 +2,7 @@ export const CRDT_EVENTS = {
   SYNC_STEP1: 'crdt:sync-step1',
   SYNC_STEP2: 'crdt:sync-step2',
   UPDATE: 'crdt:update',
+  AWARENESS: 'crdt:awareness',
 };
 
 // Coerce a socket.io binary payload into a Uint8Array.

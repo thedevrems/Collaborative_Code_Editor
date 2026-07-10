@@ -107,3 +107,61 @@ body {
 .error {
   color: #e6194b;
 }
+
+.user-list {
+  width: 200px;
+  border-left: 1px solid var(--border);
+  background: var(--panel);
+  padding: 12px;
+  overflow-y: auto;
+}
+
+.user-list-title {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #999;
+}
+
+.user-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.user-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.user-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.yRemoteSelection {
+  opacity: 0.5;
+}
+
+.yRemoteSelectionHead {
+  position: absolute;
+  border-left: 2px solid;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.yRemoteSelectionHead::after {
+  position: absolute;
+  content: attr(data-name);
+  top: -1.2em;
+  left: -2px;
+  font-size: 11px;
+  padding: 0 4px;
+  color: #fff;
+  white-space: nowrap;
+  border-radius: 3px 3px 3px 0;
+}

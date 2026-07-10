@@ -37,6 +37,15 @@ function applyAndRelay(socket, payload) {
   socket.to(roomId).emit(EVENTS.CRDT_UPDATE, { roomId, update });
 }
 
+// Relay an awareness update to the other members of the room.
+function relayAwareness(socket, payload) {
+  const { roomId, update } = payload ?? {};
+  if (!roomId || !update) {
+    return;
+  }
+  socket.to(roomId).emit(EVENTS.CRDT_AWARENESS, { roomId, update });
+}
+
 // Register CRDT synchronization handlers on a connected socket.
 export function registerCrdtHandlers(io, socket) {
   socket.on(EVENTS.CRDT_SYNC_STEP1, (payload) =>
@@ -44,4 +53,5 @@ export function registerCrdtHandlers(io, socket) {
   );
   socket.on(EVENTS.CRDT_SYNC_STEP2, (payload) => applyAndRelay(socket, payload));
   socket.on(EVENTS.CRDT_UPDATE, (payload) => applyAndRelay(socket, payload));
+  socket.on(EVENTS.CRDT_AWARENESS, (payload) => relayAwareness(socket, payload));
 }
