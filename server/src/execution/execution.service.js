@@ -1,7 +1,6 @@
 import { runContainer } from './docker-runner.js';
 import { getLanguageConfig } from './languages.js';
-
-const TIMEOUT_MS = 5000;
+import { getQuotas } from './quotas.js';
 
 // Run code for a language through the shared sandbox runner.
 async function execute(language, code) {
@@ -9,7 +8,7 @@ async function execute(language, code) {
   if (!config) {
     return { error: 'unsupported_language', stdout: '', stderr: '' };
   }
-  return runContainer(config, code, TIMEOUT_MS);
+  return runContainer(config, code, getQuotas().timeoutMs);
 }
 
 // Execute JavaScript source code in the sandbox.
