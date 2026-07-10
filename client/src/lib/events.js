@@ -8,5 +8,7 @@ export const ROOM_EVENTS = {
   EXEC_RUN: 'execution:run',
   EXEC_STARTED: 'execution:started',
   EXEC_RESULT: 'execution:result',
+  CHAT_MESSAGE: 'chat:message',
+  CHAT_HISTORY: 'chat:history',
   ERROR: 'error',
 };

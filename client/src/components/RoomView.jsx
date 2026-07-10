@@ -3,6 +3,7 @@ import Toolbar from './Toolbar.jsx';
 import Editor from './Editor.jsx';
 import UserList from './UserList.jsx';
 import OutputPanel from './OutputPanel.jsx';
+import ChatPanel from './ChatPanel.jsx';
 import { useRoomConnection } from '../hooks/useRoomConnection.js';
 import { useSharedLanguage } from '../hooks/useSharedLanguage.js';
 import { usePresence } from '../hooks/usePresence.js';
@@ -31,7 +32,10 @@ export default function RoomView() {
           <Editor connection={connection} language={language} />
           <OutputPanel running={running} result={result} />
         </div>
-        <UserList users={users} />
+        <aside className="sidebar">
+          <UserList users={users} />
+          <ChatPanel connection={connection} />
+        </aside>
       </main>
     </div>
   );

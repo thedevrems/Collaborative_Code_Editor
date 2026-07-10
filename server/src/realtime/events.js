@@ -12,5 +12,7 @@ export const EVENTS = {
   EXECUTION_RUN: 'execution:run',
   EXECUTION_STARTED: 'execution:started',
   EXECUTION_RESULT: 'execution:result',
+  CHAT_MESSAGE: 'chat:message',
+  CHAT_HISTORY: 'chat:history',
   ERROR: 'error',
 };
