@@ -10,12 +10,13 @@ export default function PlaybackView() {
   const current = frames[index];
 
   return (
-    <div className="playback">
+    <>
       <header className="playback-bar">
-        <Link className="toolbar-button" to={`/room/${id}`}>
+        <h1 className="sr-only">Session playback</h1>
+        <Link className="btn btn-secondary" to={`/room/${id}`}>
           Back to room
         </Link>
-        <button className="toolbar-button" type="button" onClick={togglePlay} disabled={!frames.length}>
+        <button className="btn btn-secondary" type="button" onClick={togglePlay} disabled={!frames.length}>
           {playing ? 'Pause' : 'Play'}
         </button>
         <input
@@ -23,13 +24,14 @@ export default function PlaybackView() {
           min="0"
           max={Math.max(frames.length - 1, 0)}
           value={index}
+          aria-label="Playback position"
           onChange={(event) => setIndex(Number(event.target.value))}
         />
-        <span className="playback-counter">
+        <output className="playback-counter">
           {frames.length ? `${index + 1} / ${frames.length}` : 'no history'}
-        </span>
+        </output>
       </header>
-      <main className="playback-body">
+      <main id="main" className="playback-body">
         <MonacoEditor
           height="100%"
           theme="vs-dark"
@@ -38,6 +40,6 @@ export default function PlaybackView() {
           options={{ readOnly: true, minimap: { enabled: false }, automaticLayout: true }}
         />
       </main>
-    </div>
+    </>
   );
 }

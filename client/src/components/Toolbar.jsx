@@ -13,10 +13,10 @@ export default function Toolbar(props) {
 
   return (
     <header className="toolbar">
-      <span className="toolbar-title">Room {roomId}</span>
+      <h1 className="toolbar-title">Room {roomId}</h1>
       <LanguageSelector value={language} onChange={onLanguageChange} />
       <button
-        className="toolbar-button"
+        className="btn btn-secondary"
         type="button"
         onClick={undo?.undo}
         disabled={!undo?.canUndo}
@@ -24,25 +24,26 @@ export default function Toolbar(props) {
         Undo
       </button>
       <button
-        className="toolbar-button"
+        className="btn btn-secondary"
         type="button"
         onClick={undo?.redo}
         disabled={!undo?.canRedo}
       >
         Redo
       </button>
-      <button className="toolbar-button" type="button" onClick={onRun} disabled={running}>
+      <button className="btn btn-primary" type="button" onClick={onRun} disabled={running}>
         {running ? 'Running…' : 'Run'}
       </button>
-      <button className="toolbar-button" type="button" onClick={copyLink}>
+      <button className="btn btn-secondary" type="button" onClick={copyLink}>
         Copy link
       </button>
-      <Link className="toolbar-button" to={`/room/${roomId}/playback`}>
+      <Link className="btn btn-secondary" to={`/room/${roomId}/playback`}>
         Playback
       </Link>
-      <span className={connected ? 'status status-online' : 'status status-offline'}>
+      <b className={connected ? 'status status-online' : 'status status-offline'}>
+        <i className="badge-dot" aria-hidden="true" />
         {connected ? 'connected' : 'offline'}
-      </span>
+      </b>
     </header>
   );
 }

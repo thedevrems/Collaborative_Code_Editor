@@ -1,25 +1,23 @@
-.playback {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
-
 .playback-bar {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 16px;
-  background: var(--panel);
-  border-bottom: 1px solid var(--border);
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-6);
+  background: var(--nav-bg);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .playback-bar input[type='range'] {
   flex: 1;
+  accent-color: var(--accent-2);
 }
 
 .playback-counter {
-  font-size: 12px;
-  color: #999;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
   min-width: 90px;
   text-align: right;
 }
@@ -29,6 +27,6 @@
   min-height: 0;
 }
 
-.playback-bar a {
-  text-decoration: none;
+.playback-body > * {
+  height: 100%;
 }

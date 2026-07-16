@@ -26,7 +26,7 @@ export default function Editor({ connection, language, onReady }) {
   }
 
   return (
-    <div className="editor">
+    <section className="editor" aria-label="Code editor">
       <MonacoEditor
         height="100%"
         theme="vs-dark"
@@ -34,6 +34,6 @@ export default function Editor({ connection, language, onReady }) {
         onMount={handleMount}
         options={{ fontSize: 14, minimap: { enabled: false }, automaticLayout: true }}
       />
-    </div>
+    </section>
   );
 }
