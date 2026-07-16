@@ -19,29 +19,31 @@ export default function HomeView() {
   }
 
   // Navigate into an existing room by its identifier.
-  function handleJoin() {
+  function handleJoin(event) {
+    event.preventDefault();
     if (joinId.trim()) {
       navigate(`/room/${joinId.trim()}`);
     }
   }
 
   return (
-    <div className="home">
+    <main id="main" className="home">
       <h1>Collaborative Code Editor</h1>
-      <button className="primary-button" type="button" onClick={handleCreate}>
+      <button className="btn btn-primary" type="button" onClick={handleCreate}>
         Create a room
       </button>
-      <div className="join-row">
+      <form className="join-row" onSubmit={handleJoin}>
         <input
           value={joinId}
           placeholder="Room id"
+          aria-label="Room id"
           onChange={(event) => setJoinId(event.target.value)}
         />
-        <button type="button" onClick={handleJoin}>
+        <button className="btn btn-secondary" type="submit">
           Join
         </button>
-      </div>
+      </form>
       {error && <p className="error">{error}</p>}
-    </div>
+    </main>
   );
 }

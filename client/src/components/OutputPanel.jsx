@@ -1,21 +1,19 @@
 // Render the standard output and errors of the latest execution.
 export default function OutputPanel({ running, result }) {
   return (
-    <section className="output-panel">
-      <div className="output-header">
-        <span>Output</span>
-        {running && <span className="output-running">running…</span>}
-      </div>
+    <figure className="output-panel">
+      <figcaption className="output-header">
+        Output
+        {running && <i className="output-running">running…</i>}
+      </figcaption>
       <pre className="output-body">
-        {result?.error && <span className="output-error">{result.error}</span>}
+        {result?.error && <strong className="output-error">{result.error}</strong>}
         {result?.timedOut && (
-          <span className="output-error">execution timed out</span>
+          <strong className="output-error">execution timed out</strong>
         )}
         {result?.stdout}
-        {result?.stderr && (
-          <span className="output-error">{result.stderr}</span>
-        )}
+        {result?.stderr && <samp className="output-error">{result.stderr}</samp>}
       </pre>
-    </section>
+    </figure>
   );
 }

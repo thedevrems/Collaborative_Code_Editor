@@ -19,10 +19,10 @@ export default function ChatPanel({ connection }) {
       <ul className="chat-messages">
         {messages.map((message) => (
           <li key={message.id} className="chat-message">
-            <span className="chat-author" style={{ color: message.user.color }}>
+            <b className="chat-author" style={{ color: message.user.color }}>
               {message.user.name}
-            </span>
-            <span className="chat-text">{message.text}</span>
+            </b>{' '}
+            {message.text}
           </li>
         ))}
       </ul>

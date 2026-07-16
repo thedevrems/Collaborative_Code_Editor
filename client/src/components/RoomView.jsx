@@ -21,8 +21,9 @@ export default function RoomView() {
   const [undoManager, setUndoManager] = useState(null);
   const undo = useUndo(undoManager);
 
+  // Toolbar is the banner; the workspace is a grid of editor, output and aside.
   return (
-    <div className="room">
+    <>
       <Toolbar
         roomId={id}
         language={language}
@@ -32,20 +33,18 @@ export default function RoomView() {
         running={running}
         undo={undo}
       />
-      <main className="room-body">
-        <div className="editor-column">
-          <Editor
-            connection={connection}
-            language={language}
-            onReady={setUndoManager}
-          />
-          <OutputPanel running={running} result={result} />
-        </div>
+      <main id="main" className="room-body">
+        <Editor
+          connection={connection}
+          language={language}
+          onReady={setUndoManager}
+        />
+        <OutputPanel running={running} result={result} />
         <aside className="sidebar">
           <UserList users={users} />
           <ChatPanel connection={connection} />
         </aside>
       </main>
-    </div>
+    </>
   );
 }
