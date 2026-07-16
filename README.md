@@ -4,7 +4,7 @@
 
 A lightweight, real-time collaborative code editor inspired by CodeSandbox.
 Create a room, share the link, and edit code together with live cursors,
-in-room chat, and sandboxed code execution for JavaScript and Python.
+in-room chat, and sandboxed code execution across nine languages.
 
 ## Features
 
@@ -13,7 +13,7 @@ in-room chat, and sandboxed code execution for JavaScript and Python.
 - Shareable rooms created from a single link
 - Real-time collaborative editing with conflict-free merging (CRDT via Yjs)
 - Named and colored multi-user cursors and presence list
-- Sandboxed execution of JavaScript and Python in ephemeral Docker containers
+- Sandboxed execution of nine languages in ephemeral Docker containers
 - Per-room text chat
 
 **Advanced**
@@ -104,8 +104,44 @@ docs/     Additional documentation
    ```
 
 The client runs on `http://localhost:5173` and the server on
-`http://localhost:4000`. The first execution pulls the `node:20-alpine` and
-`python:3.12-alpine` images.
+`http://localhost:4000`.
+
+## Supported languages
+
+Each language runs the shared room code in its own ephemeral container.
+Interpreted languages run the file directly; compiled languages compile into a
+writable temporary path and then run the artifact.
+
+| Language          | Docker image                    | Notes                                             |
+| ----------------- | ------------------------------- | ------------------------------------------------- |
+| JavaScript (Node) | `node:20-alpine`                | —                                                 |
+| TypeScript        | `oven/bun:alpine`               | Run natively by Bun (Node-compatible APIs)        |
+| Python            | `python:3.12-alpine`            | —                                                 |
+| Lua               | `nickblah/lua:5.4-alpine`       | Community image                                   |
+| Go                | `golang:1.23-alpine`            | `go run` (single `package main` file)             |
+| C++               | `gcc:14`                        | Compiled with `g++ -std=gnu++20`                  |
+| Java              | `eclipse-temurin:21-jdk-alpine` | Entry class **must be named `Main`**              |
+| Kotlin            | `zenika/kotlin:1.9-jdk17`       | Community image; slow cold compile                |
+| C#                | `mcr.microsoft.com/dotnet/sdk:8.0` | Top-level statements OK; slow cold build       |
+
+Compiled languages (Go, C++, Java, Kotlin, C#) automatically get wider CPU,
+memory, and timeout budgets than the global defaults so their toolchains can
+compile within the sandbox.
+
+The first run of a language pulls its image. Large images (`gcc`, the JDK,
+Kotlin, the .NET SDK) can exceed the execution timeout on the very first pull,
+so pre-pull them once to avoid a failed first run:
+
+```bash
+docker pull gcc:14
+docker pull eclipse-temurin:21-jdk-alpine
+docker pull mcr.microsoft.com/dotnet/sdk:8.0
+docker pull zenika/kotlin:1.9-jdk17
+```
+
+> Kotlin and C# are heavy: their images are large and every run is a fresh
+> container with no warm build cache, so cold compiles are slow. Lua and Kotlin
+> use community images (no official ones exist).
 
 ## Environment variables
 

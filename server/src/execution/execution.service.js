@@ -13,6 +13,17 @@ function blocked(threats) {
   };
 }
 
+// Merge the global quotas with any per-language overrides.
+function resolveLimits(config) {
+  const quotas = getQuotas();
+  return {
+    cpus: config.cpus ?? quotas.cpus,
+    memory: config.memory ?? quotas.memory,
+    pids: config.pids ?? quotas.pids,
+    timeoutMs: config.timeoutMs ?? quotas.timeoutMs,
+  };
+}
+
 // Run code for a language through the shared sandbox runner.
 async function execute(language, code) {
   const config = getLanguageConfig(language);
@@ -23,7 +34,7 @@ async function execute(language, code) {
   if (threats.length > 0) {
     return blocked(threats);
   }
-  return runContainer(config, code, getQuotas().timeoutMs);
+  return runContainer(config, code, resolveLimits(config));
 }
 
 // Execute JavaScript source code in the sandbox.

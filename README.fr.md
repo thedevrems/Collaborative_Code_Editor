@@ -4,8 +4,8 @@
 
 Un éditeur de code collaboratif et léger, en temps réel, inspiré de CodeSandbox.
 Créez une room, partagez le lien et éditez du code à plusieurs avec des curseurs
-en direct, un chat intégré et l'exécution de code en bac à sable pour JavaScript
-et Python.
+en direct, un chat intégré et l'exécution de code en bac à sable dans neuf
+langages.
 
 ## Fonctionnalités
 
@@ -14,7 +14,7 @@ et Python.
 - Rooms partageables créées depuis un simple lien
 - Édition collaborative en temps réel avec fusion sans conflit (CRDT via Yjs)
 - Curseurs multi-utilisateurs nommés et colorés, avec liste de présence
-- Exécution en bac à sable de JavaScript et Python dans des conteneurs Docker éphémères
+- Exécution en bac à sable de neuf langages dans des conteneurs Docker éphémères
 - Chat texte par room
 
 **Avancées**
@@ -105,8 +105,47 @@ docs/     Documentation complémentaire
    ```
 
 Le client tourne sur `http://localhost:5173` et le serveur sur
-`http://localhost:4000`. La première exécution télécharge les images
-`node:20-alpine` et `python:3.12-alpine`.
+`http://localhost:4000`.
+
+## Langages pris en charge
+
+Chaque langage exécute le code partagé de la room dans son propre conteneur
+éphémère. Les langages interprétés exécutent le fichier directement ; les
+langages compilés compilent vers un chemin temporaire inscriptible puis lancent
+l'artefact.
+
+| Langage           | Image Docker                    | Remarques                                          |
+| ----------------- | ------------------------------- | -------------------------------------------------- |
+| JavaScript (Node) | `node:20-alpine`                | —                                                  |
+| TypeScript        | `oven/bun:alpine`               | Exécuté nativement par Bun (APIs compatibles Node) |
+| Python            | `python:3.12-alpine`            | —                                                  |
+| Lua               | `nickblah/lua:5.4-alpine`       | Image communautaire                                |
+| Go                | `golang:1.23-alpine`            | `go run` (fichier `package main` unique)           |
+| C++               | `gcc:14`                        | Compilé avec `g++ -std=gnu++20`                    |
+| Java              | `eclipse-temurin:21-jdk-alpine` | La classe d'entrée **doit s'appeler `Main`**       |
+| Kotlin            | `zenika/kotlin:1.9-jdk17`       | Image communautaire ; compilation à froid lente    |
+| C#                | `mcr.microsoft.com/dotnet/sdk:8.0` | Instructions top-level OK ; build à froid lent   |
+
+Les langages compilés (Go, C++, Java, Kotlin, C#) reçoivent automatiquement des
+quotas CPU, mémoire et timeout plus larges que les valeurs globales par défaut,
+afin que leurs chaînes d'outils puissent compiler dans le bac à sable.
+
+La première exécution d'un langage télécharge son image. Les grosses images
+(`gcc`, le JDK, Kotlin, le SDK .NET) peuvent dépasser le timeout d'exécution lors
+du tout premier téléchargement ; pré-téléchargez-les une fois pour éviter un
+premier lancement en échec :
+
+```bash
+docker pull gcc:14
+docker pull eclipse-temurin:21-jdk-alpine
+docker pull mcr.microsoft.com/dotnet/sdk:8.0
+docker pull zenika/kotlin:1.9-jdk17
+```
+
+> Kotlin et C# sont lourds : leurs images sont volumineuses et chaque exécution
+> est un conteneur neuf sans cache de build chaud, donc les compilations à froid
+> sont lentes. Lua et Kotlin utilisent des images communautaires (il n'en existe
+> pas d'officielles).
 
 ## Variables d'environnement
 
