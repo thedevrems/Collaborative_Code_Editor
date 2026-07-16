@@ -3,19 +3,17 @@ import { mkdtemp, writeFile, rm } from 'fs/promises';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { nanoid } from 'nanoid';
-import { getQuotas } from './quotas.js';
 
 const MAX_OUTPUT = 100000;
 
 // Build the docker run arguments that enforce isolation and quotas.
-function buildArgs(name, dir, langConfig) {
-  const quotas = getQuotas();
+function buildArgs(name, dir, langConfig, limits) {
   return [
     'run', '--rm', '--name', name,
     '--network', 'none',
-    '--cpus', String(quotas.cpus),
-    '--memory', String(quotas.memory),
-    '--pids-limit', String(quotas.pids),
+    '--cpus', String(limits.cpus),
+    '--memory', String(limits.memory),
+    '--pids-limit', String(limits.pids),
     '--cap-drop', 'ALL',
     '--security-opt', 'no-new-privileges',
     '-v', `${dir}:/sandbox:ro`, '-w', '/sandbox',
@@ -66,11 +64,12 @@ function spawnContainer(args, name, timeoutMs) {
 }
 
 // Run submitted code inside an ephemeral, network-isolated container.
-export async function runContainer(langConfig, code, timeoutMs) {
+export async function runContainer(langConfig, code, limits) {
   const name = `exec-${nanoid(8)}`;
   const dir = await prepareWorkspace(code, langConfig.filename);
   try {
-    return await spawnContainer(buildArgs(name, dir, langConfig), name, timeoutMs);
+    const args = buildArgs(name, dir, langConfig, limits);
+    return await spawnContainer(args, name, limits.timeoutMs);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }

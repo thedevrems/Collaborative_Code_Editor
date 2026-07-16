@@ -1,3 +1,4 @@
+// Patterns applied to every language before a container is started.
 const COMMON_RULES = [
   { name: 'infinite_loop', pattern: /while\s*\(\s*true\s*\)|for\s*\(\s*;;\s*\)/ },
   { name: 'fork_bomb', pattern: /:\s*\(\s*\)\s*\{\s*:\s*\|\s*:/ },
@@ -18,10 +19,55 @@ const PYTHON_RULES = [
   { name: 'dynamic_import', pattern: /__import__\s*\(/ },
 ];
 
+const LUA_RULES = [
+  { name: 'os_execute', pattern: /os\.(execute|exit)|io\.popen/ },
+  { name: 'dynamic_load', pattern: /\b(loadstring|load)\s*\(/ },
+  { name: 'require_io', pattern: /require\s*\(?\s*['"](socket|os|io)['"]/ },
+];
+
+const GO_RULES = [
+  { name: 'os_exec', pattern: /os\/exec/ },
+  { name: 'network_package', pattern: /["']net["']|["']net\/http["']/ },
+  { name: 'syscall', pattern: /["']syscall["']|["']unsafe["']/ },
+  { name: 'process_control', pattern: /os\.Exit|syscall\./ },
+];
+
+const CPP_RULES = [
+  { name: 'system_call', pattern: /\bsystem\s*\(/ },
+  { name: 'process_spawn', pattern: /\b(fork|execv?e?|popen)\s*\(/ },
+  { name: 'network_header', pattern: /#include\s*<\s*(sys\/socket|netinet|arpa)/ },
+];
+
+// Java and Kotlin share the JVM attack surface.
+const JVM_RULES = [
+  { name: 'runtime_exec', pattern: /Runtime\.getRuntime|ProcessBuilder/ },
+  { name: 'process_control', pattern: /System\.exit/ },
+  { name: 'network_api', pattern: /java\.net|import\s+java\.net/ },
+  { name: 'reflection', pattern: /Class\.forName|\.loadClass\s*\(/ },
+];
+
+const CSHARP_RULES = [
+  { name: 'process_start', pattern: /System\.Diagnostics\.Process|Process\.Start/ },
+  { name: 'process_control', pattern: /Environment\.Exit/ },
+  { name: 'network_api', pattern: /System\.Net|WebClient|HttpClient/ },
+  { name: 'unmanaged_code', pattern: /\bunsafe\b|DllImport/ },
+];
+
+const RULES_BY_LANGUAGE = {
+  javascript: JS_RULES,
+  typescript: JS_RULES,
+  python: PYTHON_RULES,
+  lua: LUA_RULES,
+  go: GO_RULES,
+  cpp: CPP_RULES,
+  java: JVM_RULES,
+  kotlin: JVM_RULES,
+  csharp: CSHARP_RULES,
+};
+
 // Select the rule set that applies to a given language.
 function rulesFor(language) {
-  const perLanguage = language === 'python' ? PYTHON_RULES : JS_RULES;
-  return [...COMMON_RULES, ...perLanguage];
+  return [...COMMON_RULES, ...(RULES_BY_LANGUAGE[language] ?? [])];
 }
 
 // Return the names of every forbidden pattern found in the code.

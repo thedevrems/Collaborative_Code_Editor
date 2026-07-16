@@ -1,4 +1,7 @@
-const SUPPORTED_LANGUAGES = ['javascript', 'python'];
+import { getSupportedLanguages } from '../execution/languages.js';
+
+// The languages a room may use are exactly those the sandbox can execute.
+const SUPPORTED_LANGUAGES = getSupportedLanguages();
 const DEFAULT_LANGUAGE = 'javascript';
 
 // Normalize a requested language to a supported value.
